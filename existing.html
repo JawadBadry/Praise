@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praise / تسبيح</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* تم تعديل الـ body هنا ليلتزم بحجم الشاشة تماماً ويمنع التمرير */
+        body {
+            background-color: #000000b9; /* مطابق للون الخلفية الأصلي لديك */
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: grid;
+            place-items: center;
+            height: 100vh; /* يجعل الطول متناسقاً تماماً مع طول شاشة الجهاز */
+            margin: 0;
+            overflow: hidden; /* يمنع ظهور شريط التمرير وسحب الشاشة للأسفل نهائياً */
+            box-sizing: border-box;
+        }
+
+        /* كادر متوهج أبيض نيون بدلاً من الذهبي ليطابق اللعبة */
+        .gradient-box {
+            background: linear-gradient(135deg, #ffffff, #555555);
+            padding: 2px;
+            border-radius: 16px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .content-box {
+            background-color: #000000; /* خلفية سوداء فخمة داخل الكرت */
+            padding: 35px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #ffffff;
+            margin-top: 0;
+            font-size: 26px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid #ffffff;
+            padding-bottom: 15px;
+        }
+
+        /* ستايل الجدول الاحترافي العائم */
+        .users-table {
+            width: 100%;
+            margin: 25px 0 15px 0;
+            border-collapse: collapse;
+        }
+
+        .users-table th, .users-table td {
+            padding: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .users-table th {
+            color: #ffffff;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .users-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05); /* حركة خفيفة للمؤشر عند المرور على الأسماء */
+        }
+
+        .users-table td.user-name {
+            color: #cccccc;
+            font-weight: 500;
+        }
+
+        .users-table td.user-count {
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        }
+
+        .no-data {
+            color: #888888;
+            font-style: italic;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        /* زر العودة باللون الأبيض النيون المتطابق مع أزرار اللعبة */
+        .btn-back {
+            padding: 12px 28px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            display: inline-block;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            margin-top: 5px;
+        }
+
+        .btn-back:hover {
+            background-color: #000000;
+            color: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+  <a href="index.html">
+        <img style="position: absolute; top: 1px; left: 20px; width: 100px; height: 100px;" src="image.png" alt="تسبيح Logo">
+    </a>
+    <div class="gradient-box">
+        <div class="content-box">
+            <h2>قائمة أفضل 10 مسابحين</h2>
+            
+            <table class="users-table" id="listTable">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>عدد التسبيحات</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+            
+            <div id="noDataMessage" class="no-data" style="display: none;">لا يوجد مسبّحون مسجلون حالياً. ابدأ لتكون الأول!</div>
+
+            <a href="Praise.html" class="btn-back">العودة للتسبيح</a>
+        </div>
+    </div>
+
+    <script>
+        var globalUsers = localStorage.getItem('globalUsersList') ? JSON.parse(localStorage.getItem('globalUsersList')) : [];
+        var tableBody = document.getElementById("tableBody");
+        var noDataMessage = document.getElementById("noDataMessage");
+        var listTable = document.getElementById("listTable");
+
+        if (globalUsers.length === 0) {
+            listTable.style.display = "none";
+            noDataMessage.style.display = "block";
+        } else {
+            listTable.style.display = "table";
+            noDataMessage.style.display = "none";
+            
+            globalUsers.forEach(function(user) {
+                var row = document.createElement("tr");
+                
+                var nameCell = document.createElement("td");
+                nameCell.className = "user-name";
+                nameCell.textContent = user.name;
+                
+                var countCell = document.createElement("td");
+                countCell.className = "user-count";
+                countCell.textContent = user.count;
+                
+                row.appendChild(nameCell);
+                row.appendChild(countCell);
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

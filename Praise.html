@@ -1,0 +1,206 @@
+<doctype html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praise / تسبيح</title>
+    <link rel="icon" type="image/png" src="favicon.png">
+    <style>
+        /* [ستايل الخلفية العامة للعبة] */
+        body {
+            background-color: #000000b9; /* لون داكن فخم للموقع */
+            color: #ffffff; /* لون الخطوط أبيض */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 40px;
+        }
+
+        /* [تنسيقات عامة للأزرار والمدخلات] */
+        input {
+            padding: 12px;
+            margin: 10px;
+            font-size: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 8px;
+            background-color: #000000;
+            color: white;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            margin: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #000000b9; 
+            border: 2px solid #000000;
+            border-radius: 8px;
+            transition: all 0.3s ease; /* حركة ناعمة عند الضغط والتحويم */
+        }
+
+        /* [زر الكليكر الكبير المميز] */
+        #clicker\ but {
+            font-size: 24px;
+            padding: 20px 40px;
+            background-color: #000000b9;
+            color: white;
+            border: 3px solid #ffffff;
+            border-radius: 50px; /* دائري */
+            margin: 20px;
+            box-shadow: 0 0 15px rgb(255, 255, 255); /* توهج أبيض نيون */
+        }
+
+        /* تأثير المرور فوق زر الكليكر الكبير عندما يكون مفعلاً */
+        #clicker\ but:hover:not(:disabled) {
+            background-color: #000000;
+            box-shadow: 0 0 25px rgb(255, 255, 255);
+            transform: scale(1.05); /* يكبر قليلاً عند وضع الماوس */
+        }
+
+        /* [تأثير المرور للأزرار العادية (Hover)] */
+        button:hover:not(:disabled) {
+            background-color: #000000;
+            color: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); /* توهج أبيض */
+        }
+
+        /* [شكل الأزرار وهي مقفولة] */
+        button:disabled {
+            background-color: #2c2c2c;
+            border-color: #444444;
+            color: #6a6a6a;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+
+        /* [تنسيق رقم العداد] */
+        #output {
+            font-size: 60px; /* تكبير الرقم جداً */
+            font-weight: bold;
+            color: #ffffff; /* تم تعديله للأبيض ليتطابق مع نظام الألوان الخاص بك */
+            margin: 10px 0;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        h1 {
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body style="display: grid; place-items: center; height: 100vh; margin: 0;">
+    <a href="index.html">
+        <img style="position: absolute; top: 1px; left: 20px; width: 100px; height: 100px;" src="image.png" alt="تسبيح Logo">
+    </a>
+    <center>
+        <input type="text" id="userInput" placeholder="اكتب اسمك هنا">
+        <button onclick="displayName()">عرض الاسم</button>
+        <h1 id="h1"></h1>
+        <p id="play"></p>
+
+        <button id="clicker but" onclick="dissplayName()" disabled>اكتب اسمك أولاً للبدء</button>
+        <div id="output">0</div>
+        <br>
+
+        <button onclick="showResetModal()" style="background-color: #000000; color: #ff4d4d; border: 2px solid #ff4d4d;">حذف وتصفير العداد</button>
+
+        <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); place-items: center; z-index: 999;">
+            <div style="background-color: #000000; border: 2px solid #ffffff; padding: 30px; border-radius: 12px; text-align: center; max-width: 400px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);">
+                <h3 style="color: #ff4d4d; margin-top: 0;">تنبيه هام!</h3>
+                <p style="color: white; font-size: 16px;">هل أنت متأكد من رغبتك في تصفير العداد ومسح الاسم و التصنيف على القائمه العالميه؟</p>
+                <br>
+                <button onclick="confirmReset()" style="background-color: #ff4d4d; color: white; border: 1px solid #ff4d4d;">نعم، احذف</button>
+                <button onclick="hideResetModal()" style="background-color: #000000; color: #ffffff; border: 1px solid #ffffff;">تراجع</button>
+            </div>
+        </div> 
+    </center>
+</body>
+<script>
+    // 1. استرجاع البيانات المحفوظة أو البدء بـ 0 عند فتح الصفحة
+    var clicks = localStorage.getItem('savedClicks') ? parseInt(localStorage.getItem('savedClicks')) : 0;
+    var savedName = localStorage.getItem('savedName') ? localStorage.getItem('savedName') : "";
+
+    // عرض البيانات مباشرة في الصفحة فور تحميلها
+    document.getElementById("output").textContent = clicks;
+    
+    if (savedName !== "") {
+        document.getElementById("userInput").value = savedName;
+        document.querySelector("h1").textContent = "مرحبا يا " + savedName + " , يمكنك الان البدأ بالتسبيح";
+        document.getElementById("clicker but").textContent = savedName;
+        document.getElementById("clicker but").disabled = false; // تفعيل الزر إذا كان الاسم محفوظاً سابقاً
+    }
+    checkButtons(); 
+
+    function checkButtons() {
+        if (document.getElementById("playerName") && document.getElementById("playerNae")) {
+            if (clicks >= 10) {
+                document.getElementById("playerName").disabled = false;
+            } else {
+                document.getElementById("playerName").disabled = true;
+            }
+            if (clicks >= 100) {
+                document.getElementById("playerNae").disabled = false;
+            } else {
+                document.getElementById("playerNae").disabled = true;
+            }
+        }
+    }
+
+    // 2. آلة الضغط اليدوي
+    function dissplayName() {
+        clicks = clicks + 1; 
+        document.getElementById("output").textContent = clicks; 
+        localStorage.setItem('savedClicks', clicks); 
+        checkButtons();
+        updateGlobalList(); 
+    } 
+
+    // 3. آلة الاسم والترحيب
+    function displayName() {
+        var name = document.getElementById("userInput").value; 
+        if(name.trim() !== "") {
+            document.querySelector("h1").textContent = "مرحبا يا " + name + " , يمكنك الان البدأ بالتسبيح";
+            document.getElementById("clicker but").textContent = name; 
+            document.getElementById("clicker but").disabled = false; // تفعيل زر التسبيح فوراً عند إدخال الاسم
+            localStorage.setItem('savedName', name); 
+            updateGlobalList(); 
+        }
+    }
+
+    function updateGlobalList() {
+        var name = localStorage.getItem('savedName') ? localStorage.getItem('savedName') : "مسبّح مجهول";
+        var globalUsers = localStorage.getItem('globalUsersList') ? JSON.parse(localStorage.getItem('globalUsersList')) : [];
+        var userIndex = globalUsers.findIndex(u => u.name === name);
+        
+        if (userIndex !== -1) {
+            globalUsers[userIndex].count = clicks;
+        } else {
+            globalUsers.unshift({ name: name, count: clicks });
+        }
+        
+        if (globalUsers.length > 10) {
+            globalUsers = globalUsers.slice(0, 10);
+        }
+        
+        localStorage.setItem('globalUsersList', JSON.stringify(globalUsers));
+    }
+
+    function showResetModal() {
+        var modal = document.getElementById("customModal");
+        modal.style.display = "grid"; 
+    }
+
+    function hideResetModal() {
+        var modal = document.getElementById("customModal");
+        modal.style.display = "none";
+    }
+
+    function confirmReset() {
+        localStorage.clear(); 
+        location.reload();    
+    }
+</script>
+</html>
